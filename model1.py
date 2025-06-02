@@ -19,3 +19,8 @@ def model_pipeline(text: str, image: Image):
     logits = outputs.logits
     idx = logits.argmax(-1).item()
     return model.config.id2label[idx]
+
+
+# vilt-b32-finetuned-vqa
+# by dandelin
+

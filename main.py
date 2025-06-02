@@ -6,7 +6,8 @@ from PIL import Image
 
 import io
 
-from model import model_pipeline
+from model1 import model_pipeline
+from model2 import model_pipeline
 
 
 
@@ -18,7 +19,7 @@ def read_root():
     return {"Hello, World!": "This is a fastapi AI app with huggingface dandelin vlit 32 b finetuned vqa"}
 
 
-@app.post("/ask")
+@app.post("/askvilt")
 def ask(text: str, image: UploadFile):
     content = image.file.read()
 
@@ -30,6 +31,13 @@ def ask(text: str, image: UploadFile):
     return {"answer": result}
 
 
+@app.post("/askblip")
+def ask(image: UploadFile): 
+    content = image.file.read()
 
+    image = Image.open(io.BytesIO(content))
+    # image  =Image(image.file)
 
+    result = model_pipeline(image)
 
+    return {"answer": result}

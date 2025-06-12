@@ -2,19 +2,27 @@ from transformers import BlipProcessor, BlipForConditionalGeneration
 from PIL import Image
 import torch
 
+# Initialize global variables for model and processor
+_processor = None
+_model = None
+
 def model_pipeline(image: Image.Image) -> str:
-    # Load processor and model
-    processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
-    model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base")
-    model.eval()
+    global _processor, _model
+
+    # Lazy load model and processor if not already loaded
+    if _processor is None:
+        _processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
+    if _model is None:
+        _model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base")
+        _model.eval()
 
     # Preprocess input image
-    inputs = processor(images=image, return_tensors="pt")
+    inputs = _processor(images=image, return_tensors="pt")
 
     # Generate caption
     with torch.no_grad():
-        out = model.generate(**inputs)
-        caption = processor.decode(out[0], skip_special_tokens=True)
+        out = _model.generate(**inputs)
+        caption = _processor.decode(out[0], skip_special_tokens=True)
 
     return caption
 

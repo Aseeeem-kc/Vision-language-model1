@@ -14,11 +14,19 @@ inputs = processor(text=["a photo of a cat", "a photo of a dog"], images=image, 
 from PIL import Image
 from transformers import CLIPProcessor, CLIPModel
 
-# Initialize model and processor globally to avoid reloading
-processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
-model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+# Initialize global variables for model and processor
+_processor = None
+_model = None
 
 def model_pipeline(image: Image.Image) -> str:
+    global _processor, _model
+
+    # Lazy load model and processor if not already loaded
+    if _processor is None:
+        _processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+    if _model is None:
+        _model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+
     """
     Process an image using CLIP model and return the most likely label.
     
@@ -40,10 +48,10 @@ def model_pipeline(image: Image.Image) -> str:
     ]
     
     # Process the image and labels
-    inputs = processor(text=labels, images=image, return_tensors="pt", padding=True)
+    inputs = _processor(text=labels, images=image, return_tensors="pt", padding=True)
     
     # Get model predictions
-    outputs = model(**inputs)
+    outputs = _model(**inputs)
     logits_per_image = outputs.logits_per_image
     probs = logits_per_image.softmax(dim=1)
     

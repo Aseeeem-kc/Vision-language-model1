@@ -17,3 +17,8 @@ def model_pipeline(image: Image.Image) -> str:
         caption = processor.decode(out[0], skip_special_tokens=True)
 
     return caption
+
+
+# saless force
+# blip-image-captioning-base
+# https://huggingface.co/Salesforce/blip-image-captioning-base

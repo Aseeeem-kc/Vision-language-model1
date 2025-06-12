@@ -23,4 +23,5 @@ def model_pipeline(text: str, image: Image):
 
 # vilt-b32-finetuned-vqa
 # by dandelin
+# https://huggingface.co/dandelin/vilt-b32-finetuned-vqa
 
